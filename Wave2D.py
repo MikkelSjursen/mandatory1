@@ -166,25 +166,29 @@ class Wave2D:
             N0 *= 2
             Nt *= 2
         r = [np.log(E[i-1]/E[i])/np.log(h[i-1]/h[i]) for i in range(1, m+1, 1)]
-        print(r)
+        #print(r) for testing
         return r, np.array(E), np.array(h)
 
 class Wave2D_Neumann(Wave2D):
 
     def D2(self, N):
-        D = super(N)
-        D 
+        D = sparse.diags([1,-2,1],[-1,0,1],(N+1,N+1), 'lil')
+        D[0,1] =2
+        D[-1,-2] = 2
+        D = (N**2)*D
+        return D
 
     def ue(self, mx, my):
         return sp.cos(mx*sp.pi*x)*sp.cos(my*sp.pi*y)*sp.cos(self.w*t)
 
     def apply_bcs(self):
-        raise NotImplementedError
+        #we implement them i the D matrix
+        pass
 
 def test_convergence_wave2d():
     sol = Wave2D()
     r, E, h = sol.convergence_rates(mx=2, my=3)
-    assert abs(r[-1]-2) < 1e-2,abs(r[-1]-2)
+    assert abs(r[-1]-2) < 1e-2
 
 def test_convergence_wave2d_neumann():
     solN = Wave2D_Neumann()
