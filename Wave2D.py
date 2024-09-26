@@ -182,7 +182,7 @@ class Wave2D_Neumann(Wave2D):
         return sp.cos(mx*sp.pi*x)*sp.cos(my*sp.pi*y)*sp.cos(self.w*t)
 
     def apply_bcs(self):
-        #we implement them i the D matrix
+        #we implement them in the D matrix
         pass
 
 def test_convergence_wave2d():
@@ -196,6 +196,14 @@ def test_convergence_wave2d_neumann():
     assert abs(r[-1]-2) < 0.05
 
 def test_exact_wave2d():
-    raise NotImplementedError
-
+    sol = Wave2D()
+    solN = Wave2D_Neumann()
+    #checks for mx = my and cfl = 1/sqrt(2)
+    for i in range(2,20):
+        N0 , Nt , cfl , mx , my = 100, 100, 1/np.sqrt(2), i, i
+        dx, err = sol(N0, Nt, cfl=cfl, mx=mx, my=my, store_data=-1)
+        dxN, errN = solN(N0, Nt, cfl=cfl, mx=mx, my=my, store_data=-1)
+        #print(err,errN) 
+        assert abs(err) < 1e-12
+        assert abs(errN) < 1e-12
 
